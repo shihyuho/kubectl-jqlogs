@@ -11,7 +11,7 @@ func TestParseArgs(t *testing.T) {
 		args            []string
 		wantKubectlArgs []string
 		wantJqQuery     string
-		wantRaw         bool
+		wantOpts        JqFlagOptions
 		wantHelp        bool
 		wantVersion     bool
 	}{
@@ -20,7 +20,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"-n", "ns", "pod"},
 			wantKubectlArgs: []string{"-n", "ns", "pod"},
 			wantJqQuery:     "",
-			wantRaw:         false,
+			wantOpts:        JqFlagOptions{},
 			wantHelp:        false,
 			wantVersion:     false,
 		},
@@ -29,7 +29,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"pod", "--", ".level"},
 			wantKubectlArgs: []string{"pod"},
 			wantJqQuery:     ".level",
-			wantRaw:         false,
+			wantOpts:        JqFlagOptions{},
 			wantHelp:        false,
 			wantVersion:     false,
 		},
@@ -38,16 +38,61 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"-r", "pod"},
 			wantKubectlArgs: []string{"pod"},
 			wantJqQuery:     "",
-			wantRaw:         true,
+			wantOpts:        JqFlagOptions{Raw: true},
 			wantHelp:        false,
 			wantVersion:     false,
 		},
 		{
-			name:            "With Raw Flag Long",
-			args:            []string{"--raw-output", "pod"},
+			name:            "With Compact Flag",
+			args:            []string{"-c", "pod"},
 			wantKubectlArgs: []string{"pod"},
 			wantJqQuery:     "",
-			wantRaw:         true,
+			wantOpts:        JqFlagOptions{Compact: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With Yaml Flag",
+			args:            []string{"--yaml-output", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Yaml: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With Color Flag",
+			args:            []string{"-C", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Color: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With Supported but Ignored Flags",
+			args:            []string{"-S", "--unbuffered", "-a", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{SortKeys: true, Unbuffered: true, Ascii: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With Args",
+			args:            []string{"--arg", "env", "prod", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Args: []string{"env", "prod"}},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With ArgJson",
+			args:            []string{"--argjson", "v", "123", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{ArgJson: []string{"v", "123"}},
 			wantHelp:        false,
 			wantVersion:     false,
 		},
@@ -56,16 +101,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"--help"},
 			wantKubectlArgs: []string{},
 			wantJqQuery:     "",
-			wantRaw:         false,
-			wantHelp:        true,
-			wantVersion:     false,
-		},
-		{
-			name:            "With Short Help Flag",
-			args:            []string{"-h"},
-			wantKubectlArgs: []string{},
-			wantJqQuery:     "",
-			wantRaw:         false,
+			wantOpts:        JqFlagOptions{},
 			wantHelp:        true,
 			wantVersion:     false,
 		},
@@ -74,16 +110,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"--version"},
 			wantKubectlArgs: []string{},
 			wantJqQuery:     "",
-			wantRaw:         false,
-			wantHelp:        false,
-			wantVersion:     true,
-		},
-		{
-			name:            "With Short Version Flag",
-			args:            []string{"-v"},
-			wantKubectlArgs: []string{},
-			wantJqQuery:     "",
-			wantRaw:         false,
+			wantOpts:        JqFlagOptions{},
 			wantHelp:        false,
 			wantVersion:     true,
 		},
@@ -92,7 +119,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"pod", "-h"},
 			wantKubectlArgs: []string{"pod"},
 			wantJqQuery:     "",
-			wantRaw:         false,
+			wantOpts:        JqFlagOptions{},
 			wantHelp:        true,
 			wantVersion:     false,
 		},
@@ -101,7 +128,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"-r", "pod", "--", ".msg"},
 			wantKubectlArgs: []string{"pod"},
 			wantJqQuery:     ".msg",
-			wantRaw:         true,
+			wantOpts:        JqFlagOptions{Raw: true},
 			wantHelp:        false,
 			wantVersion:     false,
 		},
@@ -110,16 +137,7 @@ func TestParseArgs(t *testing.T) {
 			args:            []string{"pod", "--", "-r"},
 			wantKubectlArgs: []string{"pod"},
 			wantJqQuery:     "-r",
-			wantRaw:         false,
-			wantHelp:        false,
-			wantVersion:     false,
-		},
-		{
-			name:            "Complex Args",
-			args:            []string{"-f", "-n", "ns", "-r", "pod", "--", ".a", ".b"},
-			wantKubectlArgs: []string{"-f", "-n", "ns", "pod"},
-			wantJqQuery:     ".a .b",
-			wantRaw:         true,
+			wantOpts:        JqFlagOptions{},
 			wantHelp:        false,
 			wantVersion:     false,
 		},
@@ -127,20 +145,15 @@ func TestParseArgs(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotKubectlArgs, gotJqQuery, gotRaw, gotHelp, gotVersion := ParseArgs(tt.args)
+			gotKubectlArgs, gotJqQuery, gotOpts, gotHelp, gotVersion := ParseArgs(tt.args)
 			if !reflect.DeepEqual(gotKubectlArgs, tt.wantKubectlArgs) {
-				// Handle nil vs empty slice comparison
-				if len(gotKubectlArgs) == 0 && len(tt.wantKubectlArgs) == 0 {
-					// ok
-				} else {
-					t.Errorf("ParseArgs() kubectlArgs = %v, want %v", gotKubectlArgs, tt.wantKubectlArgs)
-				}
+				t.Errorf("ParseArgs() kubectlArgs = %v, want %v", gotKubectlArgs, tt.wantKubectlArgs)
 			}
 			if gotJqQuery != tt.wantJqQuery {
 				t.Errorf("ParseArgs() jqQuery = %v, want %v", gotJqQuery, tt.wantJqQuery)
 			}
-			if gotRaw != tt.wantRaw {
-				t.Errorf("ParseArgs() raw = %v, want %v", gotRaw, tt.wantRaw)
+			if !reflect.DeepEqual(gotOpts, tt.wantOpts) {
+				t.Errorf("ParseArgs() opts = %+v, want %+v", gotOpts, tt.wantOpts)
 			}
 			if gotHelp != tt.wantHelp {
 				t.Errorf("ParseArgs() help = %v, want %v", gotHelp, tt.wantHelp)

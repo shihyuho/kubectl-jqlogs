@@ -75,8 +75,8 @@ func TestProcessStream(t *testing.T) {
 			input := strings.NewReader(tt.input)
 			var output bytes.Buffer
 
-			// Default raw=false for existing tests
-			err := ProcessStream(input, &output, tt.query, false)
+			// Default empty options for these tests
+			err := ProcessStream(input, &output, tt.query, JqFlagOptions{})
 
 			if tt.wantContain != "" {
 				if err == nil {
@@ -98,34 +98,62 @@ func TestProcessStream(t *testing.T) {
 	}
 }
 
-func TestProcessStream_RawOutput(t *testing.T) {
+func TestProcessStream_Options(t *testing.T) {
 	tests := []struct {
 		name       string
 		input      string
 		query      string
-		raw        bool
+		opts       JqFlagOptions
 		wantOutput string
 	}{
 		{
 			name:       "Raw String with Newline",
 			input:      `{"msg": "line1\nline2"}`,
 			query:      ".msg",
-			raw:        true,
+			opts:       JqFlagOptions{Raw: true},
 			wantOutput: "line1\nline2\n",
 		},
 		{
 			name:       "Non-Raw String (JSON Quoted)",
 			input:      `{"msg": "line1\nline2"}`,
 			query:      ".msg",
-			raw:        false,
+			opts:       JqFlagOptions{Raw: false},
 			wantOutput: "\"line1\\nline2\"\n",
 		},
 		{
 			name:       "Raw Object (Fallback to JSON)",
 			input:      `{"a": 1}`,
 			query:      ".",
-			raw:        true,
+			opts:       JqFlagOptions{Raw: true},
 			wantOutput: "{\n  \"a\": 1\n}\n",
+		},
+		{
+			name:       "Compact Output",
+			input:      `{"a": 1, "b": 2}`,
+			query:      ".",
+			opts:       JqFlagOptions{Compact: true},
+			wantOutput: "{\"a\":1,\"b\":2}\n",
+		},
+		{
+			name:       "Yaml Output",
+			input:      `{"a": 1, "b": "text"}`,
+			query:      ".",
+			opts:       JqFlagOptions{Yaml: true},
+			wantOutput: "a: 1\nb: text\n",
+		},
+		{
+			name:       "With Arg",
+			input:      `{"a": "val"}`,
+			query:      ".a == $v",
+			opts:       JqFlagOptions{Args: []string{"v", "val"}},
+			wantOutput: "true\n",
+		},
+		{
+			name:       "With ArgJson",
+			input:      `{"a": [1,2]}`,
+			query:      ".a == $v",
+			opts:       JqFlagOptions{ArgJson: []string{"v", "[1,2]"}},
+			wantOutput: "true\n",
 		},
 	}
 
@@ -134,7 +162,7 @@ func TestProcessStream_RawOutput(t *testing.T) {
 			input := strings.NewReader(tt.input)
 			var output bytes.Buffer
 
-			err := ProcessStream(input, &output, tt.query, tt.raw)
+			err := ProcessStream(input, &output, tt.query, tt.opts)
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}

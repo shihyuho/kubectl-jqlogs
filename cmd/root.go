@@ -34,13 +34,19 @@ All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed 
 
   # With Raw Output (readable stack traces)
   kubectl jqlogs -r -n my-ns my-pod -- .message
+  
+  # With Compact Output (no pretty print)
+  kubectl jqlogs -c -n my-ns my-pod
+
+  # Output as YAML
+  kubectl jqlogs --yaml-output -n my-ns my-pod
 
   # With complex jq query (select and pipe)
   kubectl jqlogs -n my-ns my-pod -- 'select(.level=="error") | .message'`,
 	DisableFlagParsing: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		// Parse arguments using helper
-		kubectlArgs, jqQuery, rawOutput, help, version := jqlogs.ParseArgs(args)
+		kubectlArgs, jqQuery, opts, help, version := jqlogs.ParseArgs(args)
 
 		if help {
 			cmd.Help()
@@ -54,14 +60,6 @@ All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed 
 
 		// Run kubectl logs
 		// We expect 'kubectl' to be in the PATH.
-		// Construct command: kubectl logs [args...]
-		// Only if the user didn't provide 'logs' subcommand?
-		// The plugin is called as `kubectl jqlogs`. KubeCtl calls the binary `kubectl-jqlogs`.
-		// Checks if the first arg is 'logs'. If the user types `kubectl jqlogs logs ...`, we might not want to duplicate.
-		// But usually plugins replace a whole verb or add a new one.
-		// Here `jqlogs` is the new verb.
-		// So we essentially want to run `kubectl logs ...`.
-
 		runCmd := exec.Command("kubectl", append([]string{"logs"}, kubectlArgs...)...)
 
 		// Inherit env?
@@ -80,16 +78,12 @@ All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed 
 		}
 
 		// Process stream
-		if err := jqlogs.ProcessStream(stdoutPipe, os.Stdout, jqQuery, rawOutput); err != nil {
-			// If processing error, maybe just print it?
-			// But ProcessStream already prints non-JSON logs.
-			// The error return from ProcessStream is usually scanner error.
+		if err := jqlogs.ProcessStream(stdoutPipe, os.Stdout, jqQuery, opts); err != nil {
 			fmt.Fprintf(os.Stderr, "Error processing logs: %v\n", err)
 		}
 
 		if err := runCmd.Wait(); err != nil {
 			// If kubectl logs failed (e.g. pod not found), it exits with non-zero.
-			// We should exit with same code if possible.
 			if exitErr, ok := err.(*exec.ExitError); ok {
 				os.Exit(exitErr.ExitCode())
 			}
@@ -106,13 +100,18 @@ func Execute() {
 }
 
 func init() {
-	// Initialize flags here if necessary, but since we are wrapping kubectl logs,
-	// we might want DisableFlagParsing: true to forward everything.
-	// However, we might need to parse the jq query.
-	// Strategy:
-	// If the last arg starts with '.', it might be a jq query.
-	// But kubectl logs also has many flags.
-	// For now, let's keep it simple and refine in the logic implementation phase.
+	// Initialize flags here primarily for Help documentation.
+	// Actual parsing is done manually in ParseArgs to support DisableFlagParsing.
 	rootCmd.Flags().BoolVarP(&rawOutput, "raw-output", "r", false, "output raw strings, not JSON texts")
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
+
+	// Register other supported flags for help visibility
+	rootCmd.Flags().BoolP("compact-output", "c", false, "compact output")
+	rootCmd.Flags().BoolP("color-output", "C", false, "colorize JSON")
+	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
+	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
+	rootCmd.Flags().BoolP("sort-keys", "S", false, "sort keys of objects on output")
+	rootCmd.Flags().BoolP("ascii-output", "a", false, "output ASCII with escaped characters")
+	rootCmd.Flags().Bool("unbuffered", false, "flush output stream after each JSON object")
+	rootCmd.Flags().Bool("seq", false, "use the RS/LF for input/output separators")
 }

@@ -63,6 +63,37 @@ To use a jq query, separate it with `--` and provide the query.
 kubectl jqlogs -n my-namespace my-pod -- .level
 ```
 
+### Extended JQ Flags
+
+`kubectl-jqlogs` supports standard standard `gojq` flags:
+
+- `-r`, `--raw-output`: Output raw strings, not JSON texts.
+- `-c`, `--compact-output`: Compact output (no pretty print).
+- `-C`, `--color-output`: Colorize JSON output.
+- `--yaml-output`: Output as YAML.
+- `--arg name value`: Set a variable `$name` to the string `value`.
+- `--argjson name value`: Set a variable `$name` to the JSON `value`.
+
+#### Examples
+
+**Compact Output:**
+```bash
+kubectl jqlogs -c -n my-ns my-pod
+# {"level":"info","msg":"hello"}
+```
+
+**YAML Output:**
+```bash
+kubectl jqlogs --yaml-output -n my-ns my-pod
+# level: info
+# msg: hello
+```
+
+**Using Variables:**
+```bash
+kubectl jqlogs -n my-ns my-pod --arg env prod -- 'select(.environment == $env)'
+```
+
 **Simple Field Selection:**
 
 You can select multiple fields simply by listing them separated by spaces. The plugin will automatically format them.
