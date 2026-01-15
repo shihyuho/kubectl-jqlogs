@@ -71,8 +71,6 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 - `-c`, `--compact-output`: Compact output (no pretty print).
 - `-C`, `--color-output`: Colorize JSON output.
 - `--yaml-output`: Output as YAML.
-- `--arg name value`: Set a variable `$name` to the string `value`.
-- `--argjson name value`: Set a variable `$name` to the JSON `value`.
 
 #### Examples
 
@@ -87,11 +85,6 @@ kubectl jqlogs -c -n my-ns my-pod
 kubectl jqlogs --yaml-output -n my-ns my-pod
 # level: info
 # msg: hello
-```
-
-**Using Variables:**
-```bash
-kubectl jqlogs -n my-ns my-pod --arg env prod -- 'select(.environment == $env)'
 ```
 
 **Simple Field Selection:**

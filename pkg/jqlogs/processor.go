@@ -27,30 +27,7 @@ func ProcessStream(r io.Reader, w io.Writer, queryString string, opts JqFlagOpti
 		return fmt.Errorf("invalid jq query: %w", err)
 	}
 
-	// Prepare variables
-	var varNames []string
-	var varValues []interface{}
-
-	// Handle --arg
-	for i := 0; i < len(opts.Args); i += 2 {
-		if i+1 < len(opts.Args) {
-			varNames = append(varNames, "$"+opts.Args[i])
-			varValues = append(varValues, opts.Args[i+1])
-		}
-	}
-	// Handle --argjson
-	for i := 0; i < len(opts.ArgJson); i += 2 {
-		if i+1 < len(opts.ArgJson) {
-			var v interface{}
-			if err := json.Unmarshal([]byte(opts.ArgJson[i+1]), &v); err != nil {
-				return fmt.Errorf("invalid JSON for --argjson %s: %w", opts.ArgJson[i], err)
-			}
-			varNames = append(varNames, "$"+opts.ArgJson[i])
-			varValues = append(varValues, v)
-		}
-	}
-
-	code, err := gojq.Compile(query, gojq.WithVariables(varNames))
+	code, err := gojq.Compile(query)
 	if err != nil {
 		return fmt.Errorf("failed to compile jq query: %w", err)
 	}
@@ -67,7 +44,7 @@ func ProcessStream(r io.Reader, w io.Writer, queryString string, opts JqFlagOpti
 			continue
 		}
 
-		iter := code.Run(v, varValues...)
+		iter := code.Run(v)
 		for {
 			v, ok := iter.Next()
 			if !ok {

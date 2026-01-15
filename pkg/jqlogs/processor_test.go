@@ -141,20 +141,6 @@ func TestProcessStream_Options(t *testing.T) {
 			opts:       JqFlagOptions{Yaml: true},
 			wantOutput: "a: 1\nb: text\n",
 		},
-		{
-			name:       "With Arg",
-			input:      `{"a": "val"}`,
-			query:      ".a == $v",
-			opts:       JqFlagOptions{Args: []string{"v", "val"}},
-			wantOutput: "true\n",
-		},
-		{
-			name:       "With ArgJson",
-			input:      `{"a": [1,2]}`,
-			query:      ".a == $v",
-			opts:       JqFlagOptions{ArgJson: []string{"v", "[1,2]"}},
-			wantOutput: "true\n",
-		},
 	}
 
 	for _, tt := range tests {

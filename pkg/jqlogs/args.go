@@ -4,17 +4,15 @@ import "strings"
 
 // JqFlagOptions holds flags specific to the jq processor
 type JqFlagOptions struct {
-	Raw        bool     // -r / --raw-output
-	Compact    bool     // -c / --compact-output
-	Color      bool     // -C / --color-output
-	Monochrome bool     // -M / --monochrome-output
-	Yaml       bool     // --yaml-output
-	SortKeys   bool     // -S / --sort-keys
-	Ascii      bool     // -a / --ascii-output
-	Unbuffered bool     // --unbuffered
-	Seq        bool     // --seq
-	Args       []string // Alternating key, value for --arg
-	ArgJson    []string // Alternating key, value for --argjson
+	Raw        bool // -r / --raw-output
+	Compact    bool // -c / --compact-output
+	Color      bool // -C / --color-output
+	Monochrome bool // -M / --monochrome-output
+	Yaml       bool // --yaml-output
+	SortKeys   bool // -S / --sort-keys
+	Ascii      bool // -a / --ascii-output
+	Unbuffered bool // --unbuffered
+	Seq        bool // --seq
 }
 
 // ParseArgs parses the command line arguments
@@ -57,18 +55,6 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 			continue
 		case "--seq":
 			opts.Seq = true
-			continue
-		case "--arg":
-			if i+2 < len(args) {
-				opts.Args = append(opts.Args, args[i+1], args[i+2])
-				i += 2
-			}
-			continue
-		case "--argjson":
-			if i+2 < len(args) {
-				opts.ArgJson = append(opts.ArgJson, args[i+1], args[i+2])
-				i += 2
-			}
 			continue
 		case "-h", "--help":
 			help = true
