@@ -1,0 +1,50 @@
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: jqlogs
+spec:
+  version: "${TAG}"
+  homepage: https://github.com/shihyuho/kubectl-jqlogs
+  shortDescription: Format kubectl logs with jq
+  description: |
+    This plugin provides a way to format json logs from pods using jq.
+    It behaves essentially like kubectl logs but pipes the output through a built-in jq processor.
+    It automatically detects if a log line is valid JSON and formats it. Non-JSON lines are printed as-is.
+  caveats: |
+    The plugin uses a built-in gojq implementation, so it doesn't require a local jq installation.
+  platforms:
+    - selector:
+        matchLabels:
+          os: darwin
+          arch: amd64
+      uri: https://github.com/shihyuho/kubectl-jqlogs/releases/download/${TAG}/kubectl-jqlogs_Darwin_x86_64.tar.gz
+      sha256: "${SHA256_DARWIN_AMD64}"
+      bin: kubectl-jqlogs
+    - selector:
+        matchLabels:
+          os: darwin
+          arch: arm64
+      uri: https://github.com/shihyuho/kubectl-jqlogs/releases/download/${TAG}/kubectl-jqlogs_Darwin_arm64.tar.gz
+      sha256: "${SHA256_DARWIN_ARM64}"
+      bin: kubectl-jqlogs
+    - selector:
+        matchLabels:
+          os: linux
+          arch: amd64
+      uri: https://github.com/shihyuho/kubectl-jqlogs/releases/download/${TAG}/kubectl-jqlogs_Linux_x86_64.tar.gz
+      sha256: "${SHA256_LINUX_AMD64}"
+      bin: kubectl-jqlogs
+    - selector:
+        matchLabels:
+          os: linux
+          arch: arm64
+      uri: https://github.com/shihyuho/kubectl-jqlogs/releases/download/${TAG}/kubectl-jqlogs_Linux_arm64.tar.gz
+      sha256: "${SHA256_LINUX_ARM64}"
+      bin: kubectl-jqlogs
+    - selector:
+        matchLabels:
+          os: windows
+          arch: amd64
+      uri: https://github.com/shihyuho/kubectl-jqlogs/releases/download/${TAG}/kubectl-jqlogs_Windows_x86_64.zip
+      sha256: "${SHA256_WINDOWS_AMD64}"
+      bin: kubectl-jqlogs.exe
