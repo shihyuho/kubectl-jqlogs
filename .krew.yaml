@@ -5,11 +5,12 @@ metadata:
 spec:
   version: "${TAG}"
   homepage: https://github.com/shihyuho/kubectl-jqlogs
-  shortDescription: Format kubectl logs with jq
+  shortDescription: Format JSON logs with jq
   description: |
-    This plugin provides a way to format json logs from pods using jq.
-    It behaves essentially like kubectl logs but pipes the output through a built-in jq processor.
-    It automatically detects if a log line is valid JSON and formats it. Non-JSON lines are printed as-is.
+    This plugin formats JSON logs from pods using a built-in jq processor.
+    It behaves like "kubectl logs" but automatically detects and prettifies
+    valid JSON lines. Non-JSON lines are printed as-is. Support for raw
+    output and complex jq queries is built-in.
   caveats: |
     The plugin uses a built-in gojq implementation, so it doesn't require a local jq installation.
   platforms:
