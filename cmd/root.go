@@ -81,44 +81,7 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 		}()
 
 		// Construct gojq arguments
-		// Strategy: jq -R -r 'try (fromjson | <query>) catch .'
-		// -R: Raw Input (read lines as strings)
-		// -r: Raw Output (print fallback strings without quotes)
-		jqArgs := []string{"jq", "-R", "-r"}
-
-		// Add flags
-		if opts.Compact {
-			jqArgs = append(jqArgs, "-c")
-		}
-		if opts.Color {
-			jqArgs = append(jqArgs, "-C")
-		}
-		if opts.Monochrome {
-			jqArgs = append(jqArgs, "-M")
-		}
-		if opts.Yaml {
-			jqArgs = append(jqArgs, "--yaml-output")
-		}
-		if opts.SortKeys {
-			jqArgs = append(jqArgs, "-S")
-		}
-		if opts.Unbuffered {
-			jqArgs = append(jqArgs, "--unbuffered")
-		}
-		if opts.Seq {
-			jqArgs = append(jqArgs, "--seq")
-		}
-
-		// Prepare Query
-		if jqQuery == "" {
-			jqQuery = "."
-		}
-		// Apply SmartQuery transformation
-		jqQuery = jqlogs.SmartQuery(jqQuery)
-
-		// Wrap Query for Hybrid Mode
-		wrappedQuery := fmt.Sprintf("try (fromjson | (%s)) catch .", jqQuery)
-		jqArgs = append(jqArgs, wrappedQuery)
+		jqArgs := jqlogs.BuildJqArgs(jqQuery, opts)
 
 		// Delegate to gojq/cli
 		// Override os.Args and os.Stdin
