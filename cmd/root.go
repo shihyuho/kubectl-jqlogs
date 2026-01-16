@@ -119,8 +119,17 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 		// Apply SmartQuery transformation
 		jqQuery = jqlogs.SmartQuery(jqQuery)
 
-		// Wrap Query for Hybrid Mode
-		wrappedQuery := fmt.Sprintf("try (fromjson | (%s)) catch .", jqQuery)
+		// Wrap Query based on RawInput flag
+		var wrappedQuery string
+		if opts.RawInput {
+			// -R specified: Treat input purely as strings (disable hybrid auto-parse)
+			wrappedQuery = jqQuery
+		} else {
+			// Default: Hybrid Mode
+			// try (fromjson | query) catch .
+			wrappedQuery = fmt.Sprintf("try (fromjson | (%s)) catch .", jqQuery)
+		}
+
 		jqArgs = append(jqArgs, wrappedQuery)
 
 		// Delegate to gojq/cli
