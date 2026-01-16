@@ -10,7 +10,6 @@ type JqFlagOptions struct {
 	Monochrome bool // -M / --monochrome-output
 	Yaml       bool // --yaml-output
 	SortKeys   bool // -S / --sort-keys
-	Ascii      bool // -a / --ascii-output
 	Unbuffered bool // --unbuffered
 	Seq        bool // --seq
 }
@@ -46,9 +45,6 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 			continue
 		case "-S", "--sort-keys":
 			opts.SortKeys = true
-			continue
-		case "-a", "--ascii-output":
-			opts.Ascii = true
 			continue
 		case "--unbuffered":
 			opts.Unbuffered = true

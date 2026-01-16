@@ -102,9 +102,6 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 		if opts.SortKeys {
 			jqArgs = append(jqArgs, "-S")
 		}
-		if opts.Ascii {
-			jqArgs = append(jqArgs, "-a")
-		}
 		if opts.Unbuffered {
 			jqArgs = append(jqArgs, "--unbuffered")
 		}
@@ -161,7 +158,6 @@ func init() {
 	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
 	rootCmd.Flags().BoolP("sort-keys", "S", false, "sort keys of objects on output")
-	rootCmd.Flags().BoolP("ascii-output", "a", false, "output ASCII with escaped characters")
 	rootCmd.Flags().Bool("unbuffered", false, "flush output stream after each JSON object")
 	rootCmd.Flags().Bool("seq", false, "use the RS/LF for input/output separators")
 }
