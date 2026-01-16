@@ -74,12 +74,11 @@ Plain Text Line
 			opts:         jqlogs.JqFlagOptions{},
 			wantExitCode: 0,
 			// Output: "info hello" \n "error fail"
-			wantOutput: `info hello
-error fail
+			wantOutput: `"info hello"
+"error fail"
 Plain Text Line
-info null
-null line1
-line2
+"info null"
+"null line1\nline2"
 `,
 		},
 		{
