@@ -1,0 +1,62 @@
+name: Feature Request
+description: Suggest a new feature or improvement for implementation planning.
+title: "[FEAT] "
+labels: ["enhancement", "plan-required"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your feature request! Please fill out the information below to help us evaluate and plan.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description (Goal & Why)
+      description: Briefly describe the problem to be solved or the goal to be achieved. Why is this feature needed?
+      placeholder: |
+        Example:
+        The current logs output is hard to read, hoping to support JSON formatting and filtering,
+        because it is crucial to quickly filter key information when debugging complex Kubernetes applications.
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope-in
+    attributes:
+      label: Scope - In Scope
+      description: List items that MUST be included in this feature.
+      placeholder: |
+        - [ ] Support -r flag
+        - [ ] Support JSON query syntax
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope-out
+    attributes:
+      label: Scope - Out of Scope
+      description: List items that are explicitly NOT included to avoid scope creep.
+      placeholder: |
+        - [ ] Do not support XML format
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Relevant files, existing logic, constraints, or technical details to note.
+      placeholder: |
+        Relevant files: pkg/jqlogs/args.go
+        Technical constraints: Need to rely on jq library
+    validations:
+      required: false
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Relevant documentation links, issue links, or other resources.
+    validations:
+      required: false
