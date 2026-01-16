@@ -29,9 +29,6 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 	if opts.Unbuffered {
 		args = append(args, "--unbuffered")
 	}
-	if opts.Seq {
-		args = append(args, "--seq")
-	}
 
 	// Prepare Query
 	if jqQuery == "" {

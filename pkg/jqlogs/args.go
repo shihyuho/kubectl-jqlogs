@@ -11,7 +11,6 @@ type JqFlagOptions struct {
 	Yaml       bool // --yaml-output
 	SortKeys   bool // -S / --sort-keys
 	Unbuffered bool // --unbuffered
-	Seq        bool // --seq
 }
 
 // ParseArgs parses the command line arguments
@@ -49,9 +48,7 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 		case "--unbuffered":
 			opts.Unbuffered = true
 			continue
-		case "--seq":
-			opts.Seq = true
-			continue
+
 		case "-h", "--help":
 			help = true
 			continue

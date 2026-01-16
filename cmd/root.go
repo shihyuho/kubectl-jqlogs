@@ -113,5 +113,5 @@ func init() {
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
 	rootCmd.Flags().BoolP("sort-keys", "S", false, "sort keys of objects on output")
 	rootCmd.Flags().Bool("unbuffered", false, "flush output stream after each JSON object")
-	rootCmd.Flags().Bool("seq", false, "use the RS/LF for input/output separators")
+
 }
