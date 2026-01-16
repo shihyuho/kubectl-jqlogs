@@ -123,6 +123,23 @@ Follow logs with `-f`:
 kubectl jqlogs -f -n my-namespace my-pod
 ```
 
+## Shell Alias
+
+To save time, usage of a shell alias is recommended. Replace `kubectl logs` with a shorter command like `klo`:
+
+### Bash / Zsh
+
+```bash
+# Add to your .bashrc or .zshrc
+alias klo='kubectl jqlogs'
+```
+
+Now you can simply run:
+
+```bash
+klo -n my-ns my-pod
+```
+
 ## How it Works
 
 `kubectl-jqlogs` acts as a wrapper around `kubectl logs`. It executes the native command, captures the output stream, and processes each line:
