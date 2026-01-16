@@ -7,7 +7,7 @@
 ![License](https://img.shields.io/github/license/shihyuho/kubectl-jqlogs)
 ![Release](https://img.shields.io/github/v/release/shihyuho/kubectl-jqlogs)
 
-## Features
+
 
 ## ✨ Features
 
