@@ -33,8 +33,8 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
   # With simple field selection
   kubectl jqlogs -n my-ns my-pod -- .level .message
 
-  # With Raw Input (readable stack traces by default)
-  kubectl jqlogs -n my-ns my-pod -- .message
+  # With Raw Output (readable stack traces)
+  kubectl jqlogs -r -n my-ns my-pod -- .message
   
   # Output as YAML
   kubectl jqlogs --yaml-output -n my-ns my-pod
@@ -116,17 +116,8 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 		// Apply SmartQuery transformation
 		jqQuery = jqlogs.SmartQuery(jqQuery)
 
-		// Wrap Query based on RawInput flag
-		var wrappedQuery string
-		if opts.RawInput {
-			// -R specified: Treat input purely as strings (disable hybrid auto-parse)
-			wrappedQuery = jqQuery
-		} else {
-			// Default: Hybrid Mode
-			// try (fromjson | query) catch .
-			wrappedQuery = fmt.Sprintf("try (fromjson | (%s)) catch .", jqQuery)
-		}
-
+		// Wrap Query for Hybrid Mode
+		wrappedQuery := fmt.Sprintf("try (fromjson | (%s)) catch .", jqQuery)
 		jqArgs = append(jqArgs, wrappedQuery)
 
 		// Delegate to gojq/cli
@@ -149,7 +140,7 @@ func Execute() {
 func init() {
 	// Initialize flags here primarily for Help documentation.
 	// Actual parsing is done manually in ParseArgs to support DisableFlagParsing.
-	rootCmd.Flags().BoolVarP(&rawOutput, "raw-input", "R", false, "read each line as string instead of JSON")
+	rootCmd.Flags().BoolVarP(&rawOutput, "raw-output", "r", false, "output raw strings, not JSON texts")
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
 
 	// Register other supported flags for help visibility
