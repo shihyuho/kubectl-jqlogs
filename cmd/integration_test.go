@@ -33,7 +33,8 @@ func TestJqIntegration(t *testing.T) {
 	inputLogs := `{"level":"info","msg":"hello"}
 {"level":"error","msg":"fail"}
 Plain Text Line
-{"level":"info","nested":{"foo":"bar"}}`
+{"level":"info","nested":{"foo":"bar"}}
+{"msg":"line1\nline2"}`
 
 	tests := []struct {
 		name          string
@@ -64,6 +65,7 @@ Plain Text Line
 {"level":"error","msg":"fail"}
 Plain Text Line
 {"level":"info","nested":{"foo":"bar"}}
+{"msg":"line1\nline2"}
 `,
 		},
 		{
@@ -76,6 +78,8 @@ Plain Text Line
 error fail
 Plain Text Line
 info null
+null line1
+line2
 `,
 		},
 		{
@@ -89,6 +93,8 @@ info null
 fail
 Plain Text Line
 null
+line1
+line2
 `,
 		},
 		{
@@ -101,6 +107,52 @@ null
 				"msg: hello",
 				"nested:",
 				"  foo: bar",
+			},
+		},
+		{
+			name: "Multiline String Behavior",
+			// Input has a newline
+			jqQuery:      ".",
+			opts:         jqlogs.JqFlagOptions{},
+			wantExitCode: 0,
+			containOutput: []string{
+				`"msg": "line1\nline2"`, // JSON must escape newline
+			},
+		},
+		{
+			name: "Multiline String Behavior (-r on Object)",
+			// -r on an object still produces JSON (escaped newlines)
+			jqQuery:      ".",
+			opts:         jqlogs.JqFlagOptions{Raw: true},
+			wantExitCode: 0,
+			containOutput: []string{
+				`"msg": "line1\nline2"`, // Still escaped
+			},
+		},
+		{
+			name: "Multiline String Behavior (-r on String)",
+			// -r on a string produces raw output (interpreted newline)
+			jqQuery:      ".msg",
+			opts:         jqlogs.JqFlagOptions{Raw: true},
+			wantExitCode: 0,
+			wantOutput: `hello
+fail
+Plain Text Line
+null
+line1
+line2
+`,
+		},
+		{
+			name: "Multiline String Behavior (YAML)",
+			// YAML handles multiline strings nicely
+			jqQuery:      ".",
+			opts:         jqlogs.JqFlagOptions{Yaml: true},
+			wantExitCode: 0,
+			containOutput: []string{
+				"msg: |-",
+				"  line1",
+				"  line2",
 			},
 		},
 	}
