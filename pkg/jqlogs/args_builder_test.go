@@ -19,7 +19,25 @@ func TestBuildJqArgs(t *testing.T) {
 			opts:    JqFlagOptions{},
 			wantArgs: []string{
 				"jq", "-R", "-r",
-				`. as $line | try (fromjson | (.)) catch $line`,
+				`. as $line | try (fromjson | (.) | if type=="string" then tojson else . end) catch $line`,
+			},
+		},
+		{
+			name:    "Raw output flag",
+			jqQuery: ".msg",
+			opts:    JqFlagOptions{Raw: true},
+			wantArgs: []string{
+				"jq", "-R", "-r",
+				". as $line | try (fromjson | .msg) catch $line",
+			},
+		},
+		{
+			name:    "Without Raw output flag (default)",
+			jqQuery: ".msg",
+			opts:    JqFlagOptions{Raw: false},
+			wantArgs: []string{
+				"jq", "-R", "-r",
+				". as $line | try (fromjson | (.msg) | if type==\"string\" then tojson else . end) catch $line",
 			},
 		},
 		{
@@ -28,7 +46,7 @@ func TestBuildJqArgs(t *testing.T) {
 			opts:    JqFlagOptions{Compact: true},
 			wantArgs: []string{
 				"jq", "-R", "-r", "-c",
-				`. as $line | try (fromjson | (.)) catch $line`,
+				`. as $line | try (fromjson | (.) | if type=="string" then tojson else . end) catch $line`,
 			},
 		},
 		{
@@ -37,7 +55,7 @@ func TestBuildJqArgs(t *testing.T) {
 			opts:    JqFlagOptions{Color: true},
 			wantArgs: []string{
 				"jq", "-R", "-r", "-C",
-				`. as $line | try (fromjson | (.level)) catch $line`,
+				`. as $line | try (fromjson | (.level) | if type=="string" then tojson else . end) catch $line`,
 			},
 		},
 		{
@@ -46,7 +64,7 @@ func TestBuildJqArgs(t *testing.T) {
 			opts:    JqFlagOptions{Yaml: true},
 			wantArgs: []string{
 				"jq", "-R", "-r", "--yaml-output",
-				`. as $line | try (fromjson | (.msg)) catch $line`,
+				`. as $line | try (fromjson | (.msg) | if type=="string" then tojson else . end) catch $line`,
 			},
 		},
 		{
@@ -55,7 +73,7 @@ func TestBuildJqArgs(t *testing.T) {
 			opts:    JqFlagOptions{},
 			wantArgs: []string{
 				"jq", "-R", "-r",
-				`. as $line | try (fromjson | ("\(.level) \(.msg)")) catch $line`,
+				`. as $line | try (fromjson | ("\(.level) \(.msg)") | if type=="string" then tojson else . end) catch $line`,
 			},
 		},
 	}

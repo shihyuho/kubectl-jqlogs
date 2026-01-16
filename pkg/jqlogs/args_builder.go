@@ -40,7 +40,19 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 	// Wrap Query for Hybrid Mode
 	// Note: try/catch in jq passes the *error message* to the catch block, not the original input.
 	// So we must bind the input to a variable first: . as $line | try (fromjson | ...) catch $line
-	wrappedQuery := fmt.Sprintf(". as $line | try (fromjson | (%s)) catch $line", jqQuery)
+	//
+	// Handling Raw Output (-r):
+	// We globally enable -r to ensure the 'catch $line' part prints raw strings (no quotes) for non-JSON logs.
+	// However, for the 'fromjson' part (valid JSON logs), we want to respect the user's choice:
+	// - If User specified -r: We don't need to do anything, global -r handles it.
+	// - If User did NOT specify -r: Global -r would strip quotes from JSON strings, which is wrong.
+	//   So we pipe the result to `if type=="string" then tojson else . end` to re-add quotes for strings.
+	jqLogic := jqQuery
+	if !opts.Raw {
+		jqLogic = fmt.Sprintf("(%s) | if type==\"string\" then tojson else . end", jqQuery)
+	}
+
+	wrappedQuery := fmt.Sprintf(". as $line | try (fromjson | %s) catch $line", jqLogic)
 	args = append(args, wrappedQuery)
 
 	return args
