@@ -51,7 +51,7 @@ jobs:
           cat kubectl-jqlogs.yaml
 
       - name: Update Krew Manifest Release Asset
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: kubectl-jqlogs.yaml
