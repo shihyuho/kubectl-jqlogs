@@ -5,7 +5,7 @@ metadata:
 spec:
   version: "${TAG}"
   homepage: https://github.com/shihyuho/kubectl-jqlogs
-  shortDescription: Format JSON logs with jq
+  shortDescription: Readable, colorful JSON logs via jq
   description: |
     Formats JSON logs from pods using a built-in jq processor. It behaves like
     "kubectl logs" but automatically detects and prettifies valid JSON lines.

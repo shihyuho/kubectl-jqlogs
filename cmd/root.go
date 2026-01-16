@@ -21,7 +21,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "kubectl-jqlogs",
 	Use:   "kubectl-jqlogs",
-	Short: "Format JSON logs",
+	Short: "Readable, colorful JSON logs via jq",
 	Long: `A wrapper for 'kubectl logs' with a built-in jq engine (gojq).
 It features Hybrid Log Processing (handling standard and JSON logs seamlessly),
 Smart Query syntax, and extends jq with YAML output and arbitrary precision math.`,
