@@ -11,8 +11,7 @@ spec:
     "kubectl logs" but automatically detects and prettifies valid JSON lines.
     Non-JSON lines are printed as-is (Hybrid Processing). It supports all std
     kubectl logs flags mode, rich colors, and YAML output.
-  caveats: |
-    It uses a built-in gojq implementation, so no local jq is required.
+
   platforms:
     - selector:
         matchLabels:
