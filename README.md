@@ -18,7 +18,7 @@
   - **Precision**: Handles large numbers and heavy calculations with arbitrary precision (using `math/big`).
   - **Standard Compliance**: Fully implements pure jq language without external C dependencies.
 - **Native Experience**: Supports all standard `kubectl logs` flags and auto-completion.
-- **Raw & Color**: Built-in support for Raw (`-r`) and Colorized output.
+- **Raw Input**: Built-in support for Raw Input (`-R`) and Colorized output.
 
 ## Installation
 
@@ -72,7 +72,7 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 
 `kubectl-jqlogs` supports standard standard `gojq` flags:
 
-- `-r`, `--raw-output`: Output raw strings, not JSON texts.
+- `-R`, `--raw-input`: Read each line as string instead of JSON.
 - `-C`, `--color-output`: Colorize JSON output.
 - `--yaml-output`: Output as YAML.
 
@@ -103,7 +103,7 @@ kubectl jqlogs -n my-namespace my-pod -- .@timestamp .message
 Use `-r` to output raw strings without quotes, which renders newlines (`\n`) correctly.
 
 ```bash
-kubectl jqlogs -r -n my-namespace my-pod -- .message
+kubectl jqlogs -n my-namespace my-pod -- .message
 # Output:
 # Error: ...
 #   at com.example...

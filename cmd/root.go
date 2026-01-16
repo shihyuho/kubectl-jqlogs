@@ -20,7 +20,6 @@ var (
 
 var rootCmd = &cobra.Command{
 	Use:   "kubectl-jqlogs",
-	Use:   "kubectl-jqlogs",
 	Short: "Readable, colorful JSON logs via jq",
 	Long: `A wrapper for 'kubectl logs' with a built-in jq engine (gojq).
 It features Hybrid Log Processing (handling standard and JSON logs seamlessly),
@@ -34,8 +33,8 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
   # With simple field selection
   kubectl jqlogs -n my-ns my-pod -- .level .message
 
-  # With Raw Output (readable stack traces)
-  kubectl jqlogs -r -n my-ns my-pod -- .message
+  # With Raw Input (readable stack traces by default)
+  kubectl jqlogs -n my-ns my-pod -- .message
   
   # Output as YAML
   kubectl jqlogs --yaml-output -n my-ns my-pod
@@ -141,7 +140,7 @@ func Execute() {
 func init() {
 	// Initialize flags here primarily for Help documentation.
 	// Actual parsing is done manually in ParseArgs to support DisableFlagParsing.
-	rootCmd.Flags().BoolVarP(&rawOutput, "raw-output", "r", false, "output raw strings, not JSON texts")
+	rootCmd.Flags().BoolVarP(&rawOutput, "raw-input", "R", false, "read each line as string instead of JSON")
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
 
 	// Register other supported flags for help visibility

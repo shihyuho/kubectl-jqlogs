@@ -4,7 +4,7 @@ import "strings"
 
 // JqFlagOptions holds flags specific to the jq processor
 type JqFlagOptions struct {
-	Raw        bool // -r / --raw-output
+	RawInput   bool // -R / --raw-input
 	Color      bool // -C / --color-output
 	Monochrome bool // -M / --monochrome-output
 	Yaml       bool // --yaml-output
@@ -28,8 +28,8 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 
 		// Flag parsing
 		switch arg {
-		case "-r", "--raw-output":
-			opts.Raw = true
+		case "-R", "--raw-input":
+			opts.RawInput = true
 			continue
 		case "-C", "--color-output":
 			opts.Color = true
