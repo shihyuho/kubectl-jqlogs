@@ -78,12 +78,7 @@ func ProcessStream(r io.Reader, w io.Writer, queryString string, opts JqFlagOpti
 			}
 
 			// JSON Output
-			var output []byte
-			if opts.Compact {
-				output, err = json.Marshal(v)
-			} else {
-				output, err = json.MarshalIndent(v, "", "  ")
-			}
+			output, err := json.MarshalIndent(v, "", "  ")
 
 			if err != nil {
 				fmt.Fprintf(w, "marshal error: %v\n", err)

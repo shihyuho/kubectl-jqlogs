@@ -35,9 +35,6 @@ All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed 
   # With Raw Output (readable stack traces)
   kubectl jqlogs -r -n my-ns my-pod -- .message
   
-  # With Compact Output (no pretty print)
-  kubectl jqlogs -c -n my-ns my-pod
-
   # Output as YAML
   kubectl jqlogs --yaml-output -n my-ns my-pod
 
@@ -106,7 +103,6 @@ func init() {
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
 
 	// Register other supported flags for help visibility
-	rootCmd.Flags().BoolP("compact-output", "c", false, "compact output")
 	rootCmd.Flags().BoolP("color-output", "C", false, "colorize JSON")
 	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")

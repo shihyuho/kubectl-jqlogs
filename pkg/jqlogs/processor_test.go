@@ -127,13 +127,7 @@ func TestProcessStream_Options(t *testing.T) {
 			opts:       JqFlagOptions{Raw: true},
 			wantOutput: "{\n  \"a\": 1\n}\n",
 		},
-		{
-			name:       "Compact Output",
-			input:      `{"a": 1, "b": 2}`,
-			query:      ".",
-			opts:       JqFlagOptions{Compact: true},
-			wantOutput: "{\"a\":1,\"b\":2}\n",
-		},
+
 		{
 			name:       "Yaml Output",
 			input:      `{"a": 1, "b": "text"}`,
