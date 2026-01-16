@@ -44,6 +44,15 @@ func TestParseArgs(t *testing.T) {
 		},
 
 		{
+			name:            "With Compact Flag",
+			args:            []string{"-c", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Compact: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
 			name:            "With Yaml Flag",
 			args:            []string{"--yaml-output", "pod"},
 			wantKubectlArgs: []string{"pod"},

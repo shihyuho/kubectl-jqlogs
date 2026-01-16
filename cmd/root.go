@@ -87,6 +87,9 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 		jqArgs := []string{"jq", "-R", "-r"}
 
 		// Add flags
+		if opts.Compact {
+			jqArgs = append(jqArgs, "-c")
+		}
 		if opts.Color {
 			jqArgs = append(jqArgs, "-C")
 		}
@@ -144,6 +147,7 @@ func init() {
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
 
 	// Register other supported flags for help visibility
+	rootCmd.Flags().BoolP("compact-output", "c", false, "compact instead of pretty-printed output")
 	rootCmd.Flags().BoolP("color-output", "C", false, "colorize JSON")
 	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")

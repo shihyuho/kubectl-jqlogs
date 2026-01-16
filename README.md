@@ -73,6 +73,7 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 `kubectl-jqlogs` supports standard standard `gojq` flags:
 
 - `-R`, `--raw-input`: Read each line as string instead of JSON.
+- `-c`, `--compact-output`: Compact instead of pretty-printed output.
 - `-C`, `--color-output`: Colorize JSON output.
 - `--yaml-output`: Output as YAML.
 
