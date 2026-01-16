@@ -1,5 +1,7 @@
 # kubectl-jqlogs
 
+[English](README.md) | [繁體中文](README-zh_TW.md)
+
 **Make your JSON logs readable again.**
 
 `kubectl-jqlogs` works exactly like `kubectl logs`, but with a built-in `jq` engine that automatically prettifies JSON output. No pipes, no extra tools—just clean, queryable logs out of the box.
@@ -88,7 +90,9 @@ kubectl jqlogs --yaml-output -n my-ns my-pod
 
 **Simple Field Selection:**
 
-You can select multiple fields simply by listing them separated by spaces. The plugin will automatically format them.
+This is a **custom capability** added by `kubectl-jqlogs` to simplify log inspection. Instead of writing verbose `jq` structures (like `{msg: .msg}` or `"\(.msg)"`), you can simply list the fields you want (e.g., `.level .msg`), and the plugin handles the formatting.
+
+> **Note**: This is purely an enhancement. **All standard `jq` syntax is fully supported**, so you can still use complex filters, `select()`, `map()`, and pipes whenever needed.
 
 ```bash
 kubectl jqlogs -n my-namespace my-pod -- .level .message
