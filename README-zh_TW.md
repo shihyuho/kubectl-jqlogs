@@ -73,7 +73,7 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 
 `kubectl-jqlogs` 支援標準 `gojq` 旗標：
 
-- `-r`, `--raw-output`：輸出原始字串，而非 JSON 文字。
+- `-r`, `--raw-output`：輸出原始字串，而非 JSON 文字 (會將 `\n`, `\t` 等轉義字符還原)。
 - `-c`, `--compact-output`：緊湊輸出而非美化列印。
 - `-C`, `--color-output`：彩色化 JSON 輸出。
 - `--yaml-output`：輸出為 YAML。
