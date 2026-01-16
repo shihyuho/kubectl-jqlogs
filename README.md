@@ -9,11 +9,16 @@
 
 ## Features
 
-- **Drop-in Replacement**: Supports standard `kubectl logs` flags (e.g., `-f`, `--tail`, `-n`).
-- **Auto-Detection**: Automatically detects if a log line is valid JSON. Non-JSON lines are printed as-is.
-- **Built-in JQ**: Uses [gojq](https://github.com/itchyny/gojq), a pure Go implementation of jq. No external dependencies required.
-- **Custom Queries**: Filter and transform your logs on the fly using standard jq syntax.
-- **Raw Output**: Support `-r` flag to output raw strings, perfect for readable stack traces.
+## ✨ Features
+
+- **Hybrid Log Processing**: Seamlessly handles mixed content. JSON logs are formatted, while standard text logs are printed as-is. No more "parse error" crashing your pipe.
+- **Smart Query Syntax**: Simplified syntax for field selection. Use `.level .msg` instead of complicated string interpolation.
+- **Power of [gojq](https://github.com/itchyny/gojq)**: 
+  - **Extensions**: Supports `--yaml-output` to convert JSON logs to YAML.
+  - **Precision**: Handles large numbers and heavy calculations with arbitrary precision (using `math/big`).
+  - **Standard Compliance**: Fully implements pure jq language without external C dependencies.
+- **Native Experience**: Supports all standard `kubectl logs` flags and auto-completion.
+- **Raw & Color**: Built-in support for Raw (`-r`) and Colorized output.
 
 ## Installation
 
