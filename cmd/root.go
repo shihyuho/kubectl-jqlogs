@@ -21,9 +21,9 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "kubectl-jqlogs",
 	Short: "A kubectl plugin to format json logs",
-	Long: `A kubectl plugin that behaves like kubectl logs but formats JSON logs using jq.
-It behaves like a filter: Non-JSON lines are printed as-is, while JSON lines are formatted.
-All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed through to kubectl.`,
+	Long: `A kubectl plugin that acts as a wrapper for 'kubectl logs' with a built-in jq engine (gojq).
+It features Hybrid Log Processing (handling standard and JSON logs seamlessly), Smart Query syntax, and
+extends jq with YAML output support (--yaml-output) and arbitrary precision math.`,
 	Example: `  # Supports all standard kubectl logs flags (e.g. follow, tail)
   kubectl jqlogs -f --tail=50 -n my-ns my-pod
 
@@ -36,6 +36,7 @@ All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed 
   # With Raw Output (readable stack traces)
   kubectl jqlogs -r -n my-ns my-pod -- .message
   
+
   # Output as YAML
   kubectl jqlogs --yaml-output -n my-ns my-pod
 
@@ -52,7 +53,7 @@ All standard kubectl logs flags (e.g., -f, --tail, -p) are supported and passed 
 		}
 
 		if version {
-			fmt.Printf("kubectl-jqlogs version %s\n", Version)
+			fmt.Println(Version)
 			os.Exit(0)
 		}
 
