@@ -6,8 +6,8 @@
 
 `kubectl-jqlogs` 的運作方式與 `kubectl logs` 完全相同，但內建了 `jq` 引擎，可自動美化 JSON 輸出。無需管線 (pipes)，無需額外工具，開箱即由，提供乾淨、可查詢的日誌。
 
-![License](https://img.shields.io/github/license/shihyuho/kubectl-jqlogs)
-![Release](https://img.shields.io/github/v/release/shihyuho/kubectl-jqlogs)
+[![License](https://img.shields.io/github/license/shihyuho/kubectl-jqlogs)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/shihyuho/kubectl-jqlogs)](https://github.com/shihyuho/kubectl-jqlogs/releases/latest)
 
 
 ## ✨ 特色
@@ -153,4 +153,4 @@ klo -n my-ns my-pod
 
 ## License
 
-MIT
+[MIT](LICENSE)
