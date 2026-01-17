@@ -7,7 +7,7 @@
 `kubectl-jqlogs` works exactly like `kubectl logs`, but with a built-in `jq` engine that automatically prettifies JSON output. No pipes, no extra tools—just clean, queryable logs out of the box.
 
 [![License](https://img.shields.io/github/license/shihyuho/kubectl-jqlogs)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/shihyuho/kubectl-jqlogs)](https://github.com/shihyuho/kubectl-jqlogs/releases)
+[![Release](https://img.shields.io/github/v/release/shihyuho/kubectl-jqlogs)](https://github.com/shihyuho/kubectl-jqlogs/releases/latest)
 
 
 
