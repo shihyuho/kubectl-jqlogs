@@ -1,6 +1,8 @@
 package jqlogs
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -57,11 +59,20 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 					opts.Indent = val
 					i++ // Consume value
 					continue
+				} else {
+					fmt.Fprintf(os.Stderr, "Warning: invalid argument for --indent: %v\n", args[i+1])
 				}
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: missing argument for --indent\n")
 			}
-			// If missing value or invalid, treat as normal arg or ignore (jq would error)
-			// Here we just keep it in kubectl args if parsing fails, or better, fail?
-			// For robustness acting as wrapper, let's just ignore opt setting if invalid
+			// If missing value or invalid, do NOT continue, allow it to be appended to filteredArgs?
+			// Actually if it's invalid intended for jqlogs, we might want to consume it to avoid kubectl error,
+			// or let it pass to kubectl. Standard behavior: if it looks like our flag, consume it.
+			// But if we warned, maybe we should still consume it?
+			// If we fail to parse, currently it falls through to 'append(filteredArgs, arg)' which adds '--indent'
+			// and then next iteration adds the invalid value. This passes '--indent value' to kubectl.
+			// Kubectl will likely fail or complain. This seems acceptable as "we didn't handle it, so maybe kubectl handles it".
+			// Review decision: Just warn is sufficient, let fallback happen.
 		case "--arg":
 			if i+2 < len(args) {
 				name := args[i+1]

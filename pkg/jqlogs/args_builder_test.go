@@ -76,6 +76,33 @@ func TestBuildJqArgs(t *testing.T) {
 				`. as $line | try (fromjson | ("\(.level) \(.msg)") | if type=="string" then tojson else . end) catch $line`,
 			},
 		},
+		{
+			name:    "New Flags: Tab and Indent",
+			jqQuery: ".",
+			opts:    JqFlagOptions{Tab: true, Indent: 4},
+			wantArgs: []string{
+				"jq", "-R", "-r", "--tab", "--indent", "4",
+				`. as $line | try (fromjson | (.) | if type=="string" then tojson else . end) catch $line`,
+			},
+		},
+		{
+			name:    "New Flags: Args",
+			jqQuery: ".",
+			opts:    JqFlagOptions{Args: []string{"env", "prod", "user", "admin"}},
+			wantArgs: []string{
+				"jq", "-R", "-r", "--arg", "env", "prod", "--arg", "user", "admin",
+				`. as $line | try (fromjson | (.) | if type=="string" then tojson else . end) catch $line`,
+			},
+		},
+		{
+			name:    "New Flags: JsonArgs",
+			jqQuery: ".",
+			opts:    JqFlagOptions{JsonArgs: []string{"config", `{"debug":true}`}},
+			wantArgs: []string{
+				"jq", "-R", "-r", "--argjson", "config", `{"debug":true}`,
+				`. as $line | try (fromjson | (.) | if type=="string" then tojson else . end) catch $line`,
+			},
+		},
 	}
 
 	for _, tt := range tests {
