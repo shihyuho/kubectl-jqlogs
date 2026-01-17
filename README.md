@@ -81,8 +81,6 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 - `--yaml-output`: Output as YAML.
 - `--tab`: Use tabs for indentation.
 - `--indent n`: Use n spaces for indentation (default: 2).
-- `--arg name value`: Set a variable to a string.
-- `--argjson name value`: Set a variable to a JSON value.
 
 #### Examples
 

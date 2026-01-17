@@ -9,15 +9,13 @@ import (
 
 // JqFlagOptions holds flags specific to the jq processor
 type JqFlagOptions struct {
-	Raw        bool     // -r / --raw-output
-	Compact    bool     // -c / --compact-output
-	Color      bool     // -C / --color-output
-	Monochrome bool     // -M / --monochrome-output
-	Yaml       bool     // --yaml-output
-	Tab        bool     // --tab
-	Indent     int      // --indent n
-	Args       []string // --arg name value
-	JsonArgs   []string // --argjson name value
+	Raw        bool // -r / --raw-output
+	Compact    bool // -c / --compact-output
+	Color      bool // -C / --color-output
+	Monochrome bool // -M / --monochrome-output
+	Yaml       bool // --yaml-output
+	Tab        bool // --tab
+	Indent     int  // --indent n
 }
 
 // ParseArgs parses the command line arguments
@@ -73,22 +71,6 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 			// and then next iteration adds the invalid value. This passes '--indent value' to kubectl.
 			// Kubectl will likely fail or complain. This seems acceptable as "we didn't handle it, so maybe kubectl handles it".
 			// Review decision: Just warn is sufficient, let fallback happen.
-		case "--arg":
-			if i+2 < len(args) {
-				name := args[i+1]
-				val := args[i+2]
-				opts.Args = append(opts.Args, name, val)
-				i += 2 // Consume name and value
-				continue
-			}
-		case "--argjson":
-			if i+2 < len(args) {
-				name := args[i+1]
-				val := args[i+2]
-				opts.JsonArgs = append(opts.JsonArgs, name, val)
-				i += 2 // Consume name and value
-				continue
-			}
 
 		case "-h", "--help":
 			help = true

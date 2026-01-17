@@ -113,6 +113,4 @@ func init() {
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
 	rootCmd.Flags().Bool("tab", false, "use tabs for indentation")
 	rootCmd.Flags().Int("indent", 2, "use n spaces for indentation")
-	rootCmd.Flags().StringArray("arg", nil, "set a variable to a string")
-	rootCmd.Flags().StringArray("argjson", nil, "set a variable to a JSON value")
 }

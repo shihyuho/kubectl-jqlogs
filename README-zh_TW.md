@@ -80,8 +80,6 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 - `--yaml-output`：輸出為 YAML。
 - `--tab`：使用 Tab 進行縮排。
 - `--indent n`：使用 n 個空格進行縮排 (預設：2)。
-- `--arg name value`：將變數設定為字串值。
-- `--argjson name value`：將變數設定為 JSON 值。
 
 #### 範例
 
