@@ -23,12 +23,6 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 	if opts.Yaml {
 		args = append(args, "--yaml-output")
 	}
-	if opts.SortKeys {
-		args = append(args, "-S")
-	}
-	if opts.Unbuffered {
-		args = append(args, "--unbuffered")
-	}
 	if opts.Tab {
 		args = append(args, "--tab")
 	}

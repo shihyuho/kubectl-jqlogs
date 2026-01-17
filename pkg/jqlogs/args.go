@@ -12,8 +12,6 @@ type JqFlagOptions struct {
 	Color      bool     // -C / --color-output
 	Monochrome bool     // -M / --monochrome-output
 	Yaml       bool     // --yaml-output
-	SortKeys   bool     // -S / --sort-keys
-	Unbuffered bool     // --unbuffered
 	Tab        bool     // --tab
 	Indent     int      // --indent n
 	Args       []string // --arg name value
@@ -48,12 +46,6 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 			continue
 		case "--yaml-output":
 			opts.Yaml = true
-			continue
-		case "-S", "--sort-keys":
-			opts.SortKeys = true
-			continue
-		case "--unbuffered":
-			opts.Unbuffered = true
 			continue
 		case "--tab":
 			opts.Tab = true

@@ -76,15 +76,13 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 
 - `-r`, `--raw-output`: Output raw strings, not JSON texts.
 - `-c`, `--compact-output`: Compact instead of pretty-printed output.
-- `-C`, `--color-output`: Colorize JSON output.
+- `-C`, `--color-output`: Colorize JSON.
 - `-M`, `--monochrome-output`: Monochrome (don't colorize JSON).
-- `-S`, `--sort-keys`: Sort keys of objects on output.
 - `--yaml-output`: Output as YAML.
 - `--tab`: Use tabs for indentation.
 - `--indent n`: Use n spaces for indentation (default: 2).
-- `--unbuffered`: Flush output stream after each JSON object.
-- `--arg name value`: Pre-set a variable to a string.
-- `--argjson name value`: Pre-set a variable to a JSON value.
+- `--arg name value`: Set a variable to a string.
+- `--argjson name value`: Set a variable to a JSON value.
 
 #### Examples
 

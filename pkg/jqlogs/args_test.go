@@ -70,15 +70,7 @@ func TestParseArgs(t *testing.T) {
 			wantHelp:        false,
 			wantVersion:     false,
 		},
-		{
-			name:            "With Supported but Ignored Flags",
-			args:            []string{"-S", "--unbuffered", "pod"},
-			wantKubectlArgs: []string{"pod"},
-			wantJqQuery:     "",
-			wantOpts:        JqFlagOptions{SortKeys: true, Unbuffered: true},
-			wantHelp:        false,
-			wantVersion:     false,
-		},
+
 		{
 			name:            "With Help Flag",
 			args:            []string{"--help"},
