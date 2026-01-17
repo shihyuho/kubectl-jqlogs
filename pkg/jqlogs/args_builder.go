@@ -29,6 +29,18 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 	if opts.Unbuffered {
 		args = append(args, "--unbuffered")
 	}
+	if opts.Tab {
+		args = append(args, "--tab")
+	}
+	if opts.Indent > 0 {
+		args = append(args, "--indent", fmt.Sprintf("%d", opts.Indent))
+	}
+	for i := 0; i < len(opts.Args); i += 2 {
+		args = append(args, "--arg", opts.Args[i], opts.Args[i+1])
+	}
+	for i := 0; i < len(opts.JsonArgs); i += 2 {
+		args = append(args, "--argjson", opts.JsonArgs[i], opts.JsonArgs[i+1])
+	}
 
 	// Prepare Query
 	if jqQuery == "" {

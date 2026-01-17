@@ -69,14 +69,21 @@ kubectl jqlogs -n my-namespace my-pod
 kubectl jqlogs -n my-namespace my-pod -- .level
 ```
 
-### 進階 JQ 旗標
+### 支援的旗標 (Supported Flags)
 
 `kubectl-jqlogs` 支援標準 `gojq` 旗標：
 
-- `-r`, `--raw-output`：輸出原始字串，而非 JSON 文字 (會將 `\n`, `\t` 等轉義字符還原)。
+- `-r`, `--raw-output`：輸出原始字串，而非 JSON 文字。
 - `-c`, `--compact-output`：緊湊輸出而非美化列印。
 - `-C`, `--color-output`：彩色化 JSON 輸出。
+- `-M`, `--monochrome-output`：單色輸出 (不彩色化 JSON)。
+- `-S`, `--sort-keys`：輸出時對物件的鍵進行排序。
 - `--yaml-output`：輸出為 YAML。
+- `--tab`：使用 Tab 進行縮排。
+- `--indent n`：使用 n 個空格進行縮排 (預設：2)。
+- `--unbuffered`：每個 JSON 物件處理完後立即刷新輸出串流。
+- `--arg name value`：預設一個變數為字串值。
+- `--argjson name value`：預設一個變數為 JSON 值。
 
 #### 範例
 

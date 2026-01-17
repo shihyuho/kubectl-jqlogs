@@ -1,16 +1,23 @@
 package jqlogs
 
-import "strings"
+import (
+	"strconv"
+	"strings"
+)
 
 // JqFlagOptions holds flags specific to the jq processor
 type JqFlagOptions struct {
-	Raw        bool // -r / --raw-output
-	Compact    bool // -c / --compact-output
-	Color      bool // -C / --color-output
-	Monochrome bool // -M / --monochrome-output
-	Yaml       bool // --yaml-output
-	SortKeys   bool // -S / --sort-keys
-	Unbuffered bool // --unbuffered
+	Raw        bool     // -r / --raw-output
+	Compact    bool     // -c / --compact-output
+	Color      bool     // -C / --color-output
+	Monochrome bool     // -M / --monochrome-output
+	Yaml       bool     // --yaml-output
+	SortKeys   bool     // -S / --sort-keys
+	Unbuffered bool     // --unbuffered
+	Tab        bool     // --tab
+	Indent     int      // --indent n
+	Args       []string // --arg name value
+	JsonArgs   []string // --argjson name value
 }
 
 // ParseArgs parses the command line arguments
@@ -48,6 +55,37 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 		case "--unbuffered":
 			opts.Unbuffered = true
 			continue
+		case "--tab":
+			opts.Tab = true
+			continue
+		case "--indent":
+			if i+1 < len(args) {
+				val, err := strconv.Atoi(args[i+1])
+				if err == nil {
+					opts.Indent = val
+					i++ // Consume value
+					continue
+				}
+			}
+			// If missing value or invalid, treat as normal arg or ignore (jq would error)
+			// Here we just keep it in kubectl args if parsing fails, or better, fail?
+			// For robustness acting as wrapper, let's just ignore opt setting if invalid
+		case "--arg":
+			if i+2 < len(args) {
+				name := args[i+1]
+				val := args[i+2]
+				opts.Args = append(opts.Args, name, val)
+				i += 2 // Consume name and value
+				continue
+			}
+		case "--argjson":
+			if i+2 < len(args) {
+				name := args[i+1]
+				val := args[i+2]
+				opts.JsonArgs = append(opts.JsonArgs, name, val)
+				i += 2 // Consume name and value
+				continue
+			}
 
 		case "-h", "--help":
 			help = true

@@ -107,11 +107,15 @@ func init() {
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
 
 	// Register other supported flags for help visibility
+	// Register other supported flags for help visibility
 	rootCmd.Flags().BoolP("compact-output", "c", false, "compact instead of pretty-printed output")
 	rootCmd.Flags().BoolP("color-output", "C", false, "colorize JSON")
 	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
 	rootCmd.Flags().BoolP("sort-keys", "S", false, "sort keys of objects on output")
 	rootCmd.Flags().Bool("unbuffered", false, "flush output stream after each JSON object")
-
+	rootCmd.Flags().Bool("tab", false, "use tabs for indentation")
+	rootCmd.Flags().Int("indent", 2, "use n spaces for indentation")
+	rootCmd.Flags().StringArray("arg", nil, "pre-set a variable to a string")
+	rootCmd.Flags().StringArray("argjson", nil, "pre-set a variable to a JSON value")
 }
