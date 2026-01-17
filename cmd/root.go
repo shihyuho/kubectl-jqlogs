@@ -111,7 +111,6 @@ func init() {
 	rootCmd.Flags().BoolP("color-output", "C", false, "colorize JSON")
 	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
 	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
-	rootCmd.Flags().BoolP("sort-keys", "S", false, "sort keys of objects on output")
-	rootCmd.Flags().Bool("unbuffered", false, "flush output stream after each JSON object")
-
+	rootCmd.Flags().Bool("tab", false, "use tabs for indentation")
+	rootCmd.Flags().Int("indent", 2, "use n spaces for indentation")
 }

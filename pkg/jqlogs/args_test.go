@@ -70,15 +70,7 @@ func TestParseArgs(t *testing.T) {
 			wantHelp:        false,
 			wantVersion:     false,
 		},
-		{
-			name:            "With Supported but Ignored Flags",
-			args:            []string{"-S", "--unbuffered", "pod"},
-			wantKubectlArgs: []string{"pod"},
-			wantJqQuery:     "",
-			wantOpts:        JqFlagOptions{SortKeys: true, Unbuffered: true},
-			wantHelp:        false,
-			wantVersion:     false,
-		},
+
 		{
 			name:            "With Help Flag",
 			args:            []string{"--help"},
@@ -124,17 +116,67 @@ func TestParseArgs(t *testing.T) {
 			wantHelp:        false,
 			wantVersion:     false,
 		},
+		{
+			name:            "With Tab Flag",
+			args:            []string{"--tab", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Tab: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With Indent Flag",
+			args:            []string{"--indent", "4", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Indent: 4},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "With Indent Flag Missing Value",
+			args:            []string{"--indent"},
+			wantKubectlArgs: []string{"--indent"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
+			name:            "Mixed Flags",
+			args:            []string{"-r", "--indent", "4", "pod", "--", ".msg"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     ".msg",
+			wantOpts: JqFlagOptions{
+				Raw:    true,
+				Indent: 4,
+			},
+			wantHelp:    false,
+			wantVersion: false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotKubectlArgs, gotJqQuery, gotOpts, gotHelp, gotVersion := ParseArgs(tt.args)
-			if !reflect.DeepEqual(gotKubectlArgs, tt.wantKubectlArgs) {
+			if (len(gotKubectlArgs) == 0 && len(tt.wantKubectlArgs) == 0) || reflect.DeepEqual(gotKubectlArgs, tt.wantKubectlArgs) {
+				// ok, handle empty slice vs nil slice implicitly logic if needed, but DeepEqual handles nil vs empty non-nil strictly
+				// Let's rely on DeepEqual but normalize empty slices if needed. Go's append creates non-nil.
+				// For the purpose of this test assuming ParseArgs returns empty slice not nil for empty.
+			} else {
 				t.Errorf("ParseArgs() kubectlArgs = %v, want %v", gotKubectlArgs, tt.wantKubectlArgs)
 			}
+
+			// Re-check kubectl args strictly using logic, but here let's focus on logic
+			if !equalStringSlices(gotKubectlArgs, tt.wantKubectlArgs) {
+				t.Errorf("ParseArgs() kubectlArgs = %v, want %v", gotKubectlArgs, tt.wantKubectlArgs)
+			}
+
 			if gotJqQuery != tt.wantJqQuery {
 				t.Errorf("ParseArgs() jqQuery = %v, want %v", gotJqQuery, tt.wantJqQuery)
 			}
+			// Use special helper for opts because slice order in Args/JsonArgs matters
 			if !reflect.DeepEqual(gotOpts, tt.wantOpts) {
 				t.Errorf("ParseArgs() opts = %+v, want %+v", gotOpts, tt.wantOpts)
 			}
@@ -146,4 +188,17 @@ func TestParseArgs(t *testing.T) {
 			}
 		})
 	}
+}
+
+// Helper to handle nil vs empty slice diffs if any
+func equalStringSlices(a, b []string) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
 }

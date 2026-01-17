@@ -23,11 +23,11 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 	if opts.Yaml {
 		args = append(args, "--yaml-output")
 	}
-	if opts.SortKeys {
-		args = append(args, "-S")
+	if opts.Tab {
+		args = append(args, "--tab")
 	}
-	if opts.Unbuffered {
-		args = append(args, "--unbuffered")
+	if opts.Indent > 0 {
+		args = append(args, "--indent", fmt.Sprintf("%d", opts.Indent))
 	}
 
 	// Prepare Query
