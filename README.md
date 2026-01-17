@@ -11,6 +11,7 @@
 
 
 
+
 ## ✨ Features
 
 - **Hybrid Log Processing**: Seamlessly handles mixed content. JSON logs are formatted, while standard text logs are printed as-is. No more "parse error" crashing your pipe.

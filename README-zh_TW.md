@@ -10,6 +10,7 @@
 [![Release](https://img.shields.io/github/v/release/shihyuho/kubectl-jqlogs)](https://github.com/shihyuho/kubectl-jqlogs/releases/latest)
 
 
+
 ## ✨ 特色
 
 - **混合日誌處理**：無縫處理混合內容。JSON 日誌會被格式化，而標準文字日誌則照原樣列印。不再有 "parse error" 讓你的管線崩潰。
