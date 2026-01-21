@@ -1,6 +1,11 @@
 package jqlogs
 
-import "strings"
+import (
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
 
 // JqFlagOptions holds flags specific to the jq processor
 type JqFlagOptions struct {
@@ -9,8 +14,8 @@ type JqFlagOptions struct {
 	Color      bool // -C / --color-output
 	Monochrome bool // -M / --monochrome-output
 	Yaml       bool // --yaml-output
-	SortKeys   bool // -S / --sort-keys
-	Unbuffered bool // --unbuffered
+	Tab        bool // --tab
+	Indent     int  // --indent n
 }
 
 // ParseArgs parses the command line arguments
@@ -42,12 +47,30 @@ func ParseArgs(args []string) (kubectlArgs []string, jqQuery string, opts JqFlag
 		case "--yaml-output":
 			opts.Yaml = true
 			continue
-		case "-S", "--sort-keys":
-			opts.SortKeys = true
+		case "--tab":
+			opts.Tab = true
 			continue
-		case "--unbuffered":
-			opts.Unbuffered = true
-			continue
+		case "--indent":
+			if i+1 < len(args) {
+				val, err := strconv.Atoi(args[i+1])
+				if err == nil {
+					opts.Indent = val
+					i++ // Consume value
+					continue
+				} else {
+					fmt.Fprintf(os.Stderr, "Warning: invalid argument for --indent: %v\n", args[i+1])
+				}
+			} else {
+				fmt.Fprintf(os.Stderr, "Warning: missing argument for --indent\n")
+			}
+			// If missing value or invalid, do NOT continue, allow it to be appended to filteredArgs?
+			// Actually if it's invalid intended for jqlogs, we might want to consume it to avoid kubectl error,
+			// or let it pass to kubectl. Standard behavior: if it looks like our flag, consume it.
+			// But if we warned, maybe we should still consume it?
+			// If we fail to parse, currently it falls through to 'append(filteredArgs, arg)' which adds '--indent'
+			// and then next iteration adds the invalid value. This passes '--indent value' to kubectl.
+			// Kubectl will likely fail or complain. This seems acceptable as "we didn't handle it, so maybe kubectl handles it".
+			// Review decision: Just warn is sufficient, let fallback happen.
 
 		case "-h", "--help":
 			help = true

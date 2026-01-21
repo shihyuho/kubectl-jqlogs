@@ -70,14 +70,17 @@ To use a jq query, separate it with `--` and provide the query.
 kubectl jqlogs -n my-namespace my-pod -- .level
 ```
 
-### Extended JQ Flags
+### Supported Flags
 
-`kubectl-jqlogs` supports standard standard `gojq` flags:
+`kubectl-jqlogs` supports standard `gojq` flags:
 
-- `-r`, `--raw-output`: Output raw strings, not JSON texts (unescapes `\n`, `\t`, etc).
+- `-r`, `--raw-output`: Output raw strings, not JSON texts.
 - `-c`, `--compact-output`: Compact instead of pretty-printed output.
-- `-C`, `--color-output`: Colorize JSON output.
+- `-C`, `--color-output`: Colorize JSON.
+- `-M`, `--monochrome-output`: Monochrome (don't colorize JSON).
 - `--yaml-output`: Output as YAML.
+- `--tab`: Use tabs for indentation.
+- `--indent n`: Use n spaces for indentation (default: 2).
 
 #### Examples
 
