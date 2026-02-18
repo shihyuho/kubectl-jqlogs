@@ -2,7 +2,7 @@
 
 [English](README.md) | [繁體中文](README-zh_TW.md)
 
-**讓你的 JSON日誌再次易讀。**
+**讓 JSON logs 再次好讀。**
 
 `kubectl-jqlogs` 的運作方式與 `kubectl logs` 完全相同，但內建了 `jq` 引擎，可自動美化 JSON 輸出。無需管線 (pipes)，無需額外工具，開箱即由，提供乾淨、可查詢的日誌。
 
