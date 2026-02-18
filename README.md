@@ -2,7 +2,7 @@
 
 [English](README.md) | [繁體中文](README-zh_TW.md)
 
-**Make your JSON logs readable again.**
+**Make JSON logs readable again.**
 
 `kubectl-jqlogs` works exactly like `kubectl logs`, but with a built-in `jq` engine that automatically prettifies JSON output. No pipes, no extra tools—just clean, queryable logs out of the box.
 
