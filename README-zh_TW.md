@@ -15,7 +15,7 @@
 - **混合日誌處理**：無縫處理混合內容。JSON 日誌會被格式化，而標準文字日誌則照原樣列印。不再有 "parse error" 讓你的管線崩潰。
 - **智慧查詢語法**：簡化的欄位選擇語法。使用 `.level .msg` 代替複雜的字串插值。
 - **[gojq](https://github.com/itchyny/gojq) 的強大功能**：
-  - **擴充功能**：支援 `--yaml-output` 將 JSON 日誌轉換為 YAML。
+  - **擴充功能**：支援 `-y`/`--yaml-output` 將 JSON 日誌轉換為 YAML。
   - **精確度**：使用任意精確度處理大數字和繁重計算 (使用 `math/big`)。
   - **標準合規**：完全實作純 jq 語言，無外部 C 依賴。
 - **原生體驗**：支援所有標準 `kubectl logs` 旗標和自動補全。
@@ -77,22 +77,22 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 - `-c`, `--compact-output`：緊湊輸出而非美化列印。
 - `-C`, `--color-output`：彩色化 JSON。
 - `-M`, `--monochrome-output`：單色輸出 (不彩色化 JSON)。
-- `--yaml-output`：輸出為 YAML。
+- `-y`, `--yaml-output`：輸出為 YAML。
 - `--tab`：使用 Tab 進行縮排。
-- `--indent n`：使用 n 個空格進行縮排 (預設：2)。
+- `--indent n`：使用 n 個空格進行縮排 (0-7，預設：2)。
 
 #### 範例
 
 **YAML 輸出：**
 ```bash
-kubectl jqlogs --yaml-output -n my-ns my-pod
+kubectl jqlogs -y -n my-ns my-pod
 # level: info
 # msg: hello
 ```
 
 **簡易欄位選擇 (Simple Field Selection):**
 
-這是 `kubectl-jqlogs` 新增的 **自定義功能 (custom capability)**，旨在簡化日誌檢查。您無需編寫冗長的 `jq` 結構 (如 `{msg: .msg}` 或 `"\(.msg)"`)，只需列出您想要的欄位 (例如 `.level .msg`)，外掛程式就會自動為您格式化。
+這是 `kubectl-jqlogs` 新增的 **自訂功能 (custom capability)**，旨在簡化日誌檢查。您無需編寫冗長的 `jq` 結構 (如 `{msg: .msg}` 或 `"\(.msg)"`)，只需列出您想要的欄位 (例如 `.level .msg`)，外掛程式就會自動為您格式化。
 
 > **注意**：這純粹是一項增強功能。**完全支援所有標準 `jq` 語法**，因此您隨時可以使用複雜的過濾器、`select()`、`map()` 和管線。
 
@@ -152,7 +152,7 @@ klo -n my-ns my-pod
 
 1. 如果該行是有效的 JSON，它會套用指定的 jq 查詢 (預設為 `.`) 並美化列印結果。
 2. 如果該行不是 JSON，則照原樣列印。
-3. 如果查詢對某一行失敗，會報告錯誤但串流繼續。
+3. 如果 jq 查詢對某個 JSON 行失敗 (例如欄位不存在)，則照原樣列印該行。
 
 ## License
 

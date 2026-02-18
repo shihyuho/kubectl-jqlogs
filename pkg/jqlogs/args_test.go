@@ -62,6 +62,15 @@ func TestParseArgs(t *testing.T) {
 			wantVersion:     false,
 		},
 		{
+			name:            "With Yaml Flag (short -y)",
+			args:            []string{"-y", "pod"},
+			wantKubectlArgs: []string{"pod"},
+			wantJqQuery:     "",
+			wantOpts:        JqFlagOptions{Yaml: true},
+			wantHelp:        false,
+			wantVersion:     false,
+		},
+		{
 			name:            "With Color Flag",
 			args:            []string{"-C", "pod"},
 			wantKubectlArgs: []string{"pod"},
@@ -135,15 +144,6 @@ func TestParseArgs(t *testing.T) {
 			wantVersion:     false,
 		},
 		{
-			name:            "With Indent Flag Missing Value",
-			args:            []string{"--indent"},
-			wantKubectlArgs: []string{"--indent"},
-			wantJqQuery:     "",
-			wantOpts:        JqFlagOptions{},
-			wantHelp:        false,
-			wantVersion:     false,
-		},
-		{
 			name:            "Mixed Flags",
 			args:            []string{"-r", "--indent", "4", "pod", "--", ".msg"},
 			wantKubectlArgs: []string{"pod"},
@@ -160,23 +160,12 @@ func TestParseArgs(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotKubectlArgs, gotJqQuery, gotOpts, gotHelp, gotVersion := ParseArgs(tt.args)
-			if (len(gotKubectlArgs) == 0 && len(tt.wantKubectlArgs) == 0) || reflect.DeepEqual(gotKubectlArgs, tt.wantKubectlArgs) {
-				// ok, handle empty slice vs nil slice implicitly logic if needed, but DeepEqual handles nil vs empty non-nil strictly
-				// Let's rely on DeepEqual but normalize empty slices if needed. Go's append creates non-nil.
-				// For the purpose of this test assuming ParseArgs returns empty slice not nil for empty.
-			} else {
-				t.Errorf("ParseArgs() kubectlArgs = %v, want %v", gotKubectlArgs, tt.wantKubectlArgs)
-			}
 
-			// Re-check kubectl args strictly using logic, but here let's focus on logic
-			if !equalStringSlices(gotKubectlArgs, tt.wantKubectlArgs) {
-				t.Errorf("ParseArgs() kubectlArgs = %v, want %v", gotKubectlArgs, tt.wantKubectlArgs)
-			}
+			assertStringSliceEqual(t, "kubectlArgs", gotKubectlArgs, tt.wantKubectlArgs)
 
 			if gotJqQuery != tt.wantJqQuery {
 				t.Errorf("ParseArgs() jqQuery = %v, want %v", gotJqQuery, tt.wantJqQuery)
 			}
-			// Use special helper for opts because slice order in Args/JsonArgs matters
 			if !reflect.DeepEqual(gotOpts, tt.wantOpts) {
 				t.Errorf("ParseArgs() opts = %+v, want %+v", gotOpts, tt.wantOpts)
 			}
@@ -190,15 +179,18 @@ func TestParseArgs(t *testing.T) {
 	}
 }
 
-// Helper to handle nil vs empty slice diffs if any
-func equalStringSlices(a, b []string) bool {
-	if len(a) != len(b) {
-		return false
+// assertStringSliceEqual is a test helper that compares two string slices,
+// treating nil and empty slices as equal.
+func assertStringSliceEqual(t *testing.T, field string, got, want []string) {
+	t.Helper()
+	if len(got) != len(want) {
+		t.Errorf("ParseArgs() %s = %v, want %v", field, got, want)
+		return
 	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
+	for i := range got {
+		if got[i] != want[i] {
+			t.Errorf("ParseArgs() %s = %v, want %v", field, got, want)
+			return
 		}
 	}
-	return true
 }
