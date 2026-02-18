@@ -1,6 +1,13 @@
 package jqlogs
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
+
+// jqProgramName is the placeholder for os.Args[0] when invoking gojq/cli.
+// gojq/cli uses os.Args[0] as the program name in usage messages.
+const jqProgramName = "jq"
 
 // BuildJqArgs constructs the arguments for the underlying jq execution
 func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
@@ -9,7 +16,9 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 	// -r: Raw Output (print fallback strings without quotes)
 
 	// We always use -R and -r by default in the wrapper strategy
-	args := []string{"jq", "-R", "-r"}
+	// Pre-allocate capacity: 3 base flags + up to 5 optional flags + 1 query
+	args := make([]string, 0, 9)
+	args = append(args, jqProgramName, "-R", "-r")
 
 	if opts.Compact {
 		args = append(args, "-c")
@@ -27,7 +36,7 @@ func BuildJqArgs(jqQuery string, opts JqFlagOptions) []string {
 		args = append(args, "--tab")
 	}
 	if opts.Indent > 0 {
-		args = append(args, "--indent", fmt.Sprintf("%d", opts.Indent))
+		args = append(args, "--indent", strconv.Itoa(opts.Indent))
 	}
 
 	// Prepare Query

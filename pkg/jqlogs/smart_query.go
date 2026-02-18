@@ -34,14 +34,6 @@ func SmartQuery(q string) string {
 		if anyFixed {
 			return parts[0]
 		}
-		// If not fixed, prefer original 'q' to preserve whitespace/formatting of complex queries,
-		// though for single part fields it doesn't matter much.
-		// But allow falling through to "Try parse as is".
-		if _, err := gojq.Parse(q); err == nil {
-			return q
-		}
-		// If original invalid (e.g. .@timestamp but somehow missed?), use part?
-		// No, just return q.
 		return q
 	}
 
@@ -67,7 +59,9 @@ func SmartQuery(q string) string {
 			if i > 0 {
 				builder.WriteString(" ")
 			}
-			builder.WriteString(`\(` + part + `)`)
+			builder.WriteString(`\(`)
+			builder.WriteString(part)
+			builder.WriteString(`)`)
 		}
 		builder.WriteString(`"`)
 		transformed := builder.String()

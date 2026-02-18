@@ -9,17 +9,36 @@ permissions:
   contents: write
 
 jobs:
-  goreleaser:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
       - name: Set up Go
         uses: actions/setup-go@v6
         with:
           go-version: "1.24"
+
+      - name: Run Tests
+        run: make test
+
+  goreleaser:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: "1.24"
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
@@ -29,29 +48,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Generate Krew Manifest
-        run: |
-          TAG=${GITHUB_REF#refs/tags/}
-          echo "Generating Krew manifest for tag: $TAG"
-
-          # Extract checksums
-          CHECKSUMS=$(cat dist/checksums.txt)
-
-          export TAG
-
-          export SHA256_DARWIN_AMD64=$(echo "$CHECKSUMS" | grep 'Darwin_x86_64.tar.gz' | awk '{print $1}')
-          export SHA256_DARWIN_ARM64=$(echo "$CHECKSUMS" | grep 'Darwin_arm64.tar.gz' | awk '{print $1}')
-          export SHA256_LINUX_AMD64=$(echo "$CHECKSUMS" | grep 'Linux_x86_64.tar.gz' | awk '{print $1}')
-          export SHA256_LINUX_ARM64=$(echo "$CHECKSUMS" | grep 'Linux_arm64.tar.gz' | awk '{print $1}')
-          export SHA256_WINDOWS_AMD64=$(echo "$CHECKSUMS" | grep 'Windows_x86_64.zip' | awk '{print $1}')
-
-          envsubst < .krew.yaml > kubectl-jqlogs.yaml
-
-          echo "Generated kubectl-jqlogs.yaml content:"
-          cat kubectl-jqlogs.yaml
-
-      - name: Update Krew Manifest Release Asset
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: kubectl-jqlogs.yaml
+      - name: Update new version in krew-index
+        uses: rajatjindal/krew-release-bot@v0.0.47

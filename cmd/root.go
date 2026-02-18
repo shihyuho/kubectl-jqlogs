@@ -74,7 +74,11 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 			os.Exit(1)
 		}
 
-		// Close write end after command finishes ensures cli.Run receives EOF
+		// Close write end after kubectl exits, ensuring gojq/cli receives EOF.
+		// Note: We intentionally ignore the Wait() error here. If kubectl exits with
+		// a non-zero code (e.g., pod not found), the error message is already written
+		// to os.Stderr above. The goroutine cannot propagate errors back to the main
+		// flow, and gojq/cli will naturally terminate once it reads EOF from the pipe.
 		go func() {
 			runCmd.Wait()
 			w.Close()
@@ -101,8 +105,9 @@ func Execute() {
 }
 
 func init() {
-	// Initialize flags here primarily for Help documentation.
-	// Actual parsing is done manually in ParseArgs to support DisableFlagParsing.
+	// DisableFlagParsing is set on rootCmd, so cobra never parses these flags.
+	// They are registered here solely to populate the --help output with accurate
+	// flag descriptions. Actual flag parsing is done manually in ParseArgs.
 	rootCmd.Flags().BoolVarP(&rawOutput, "raw-output", "r", false, "output raw strings, not JSON texts")
 	rootCmd.Flags().BoolVarP(&versionFlag, "version", "v", false, "print the version")
 
@@ -110,7 +115,7 @@ func init() {
 	rootCmd.Flags().BoolP("compact-output", "c", false, "compact instead of pretty-printed output")
 	rootCmd.Flags().BoolP("color-output", "C", false, "colorize JSON")
 	rootCmd.Flags().BoolP("monochrome-output", "M", false, "monochrome (don't colorize JSON)")
-	rootCmd.Flags().Bool("yaml-output", false, "output as YAML")
+	rootCmd.Flags().BoolP("yaml-output", "y", false, "output as YAML")
 	rootCmd.Flags().Bool("tab", false, "use tabs for indentation")
-	rootCmd.Flags().Int("indent", 2, "use n spaces for indentation")
+	rootCmd.Flags().Int("indent", 2, "use n spaces for indentation (0-7)")
 }

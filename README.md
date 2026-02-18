@@ -16,7 +16,7 @@
 - **Hybrid Log Processing**: Seamlessly handles mixed content. JSON logs are formatted, while standard text logs are printed as-is. No more "parse error" crashing your pipe.
 - **Smart Query Syntax**: Simplified syntax for field selection. Use `.level .msg` instead of complicated string interpolation.
 - **Power of [gojq](https://github.com/itchyny/gojq)**: 
-  - **Extensions**: Supports `--yaml-output` to convert JSON logs to YAML.
+  - **Extensions**: Supports `-y`/`--yaml-output` to convert JSON logs to YAML.
   - **Precision**: Handles large numbers and heavy calculations with arbitrary precision (using `math/big`).
   - **Standard Compliance**: Fully implements pure jq language without external C dependencies.
 - **Native Experience**: Supports all standard `kubectl logs` flags and auto-completion.
@@ -78,15 +78,15 @@ kubectl jqlogs -n my-namespace my-pod -- .level
 - `-c`, `--compact-output`: Compact instead of pretty-printed output.
 - `-C`, `--color-output`: Colorize JSON.
 - `-M`, `--monochrome-output`: Monochrome (don't colorize JSON).
-- `--yaml-output`: Output as YAML.
+- `-y`, `--yaml-output`: Output as YAML.
 - `--tab`: Use tabs for indentation.
-- `--indent n`: Use n spaces for indentation (default: 2).
+- `--indent n`: Use n spaces for indentation (0-7, default: 2).
 
 #### Examples
 
 **YAML Output:**
 ```bash
-kubectl jqlogs --yaml-output -n my-ns my-pod
+kubectl jqlogs -y -n my-ns my-pod
 # level: info
 # msg: hello
 ```
@@ -153,7 +153,7 @@ klo -n my-ns my-pod
 
 1. If the line is valid JSON, it applies the specified jq query (default is `.`) and pretty-prints the result.
 2. If the line is not JSON, it is printed verbatim.
-3. If the query fails for a line, an error is reported but the stream continues.
+3. If the jq query fails for a JSON line (e.g., the field doesn't exist), the original line is printed as-is.
 
 ## License
 
