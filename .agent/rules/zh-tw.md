@@ -2,4 +2,5 @@
 trigger: always_on
 ---
 
-# **務必(MUST)**使用繁體中文
+- ALWAYS use the QUESTION TOOL if you need to ask user.
+- ALWAYS think and response in Traditional Chinese (zh_TW).
