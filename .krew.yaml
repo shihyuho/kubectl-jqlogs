@@ -13,33 +13,33 @@ spec:
     kubectl logs flags mode, rich colors, and YAML output.
 
   platforms:
-    - selector:
-        matchLabels:
-          os: darwin
-          arch: amd64
-      {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Darwin_x86_64.tar.gz" .TagName }}
-      bin: kubectl-jqlogs
-    - selector:
-        matchLabels:
-          os: darwin
-          arch: arm64
-      {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Darwin_arm64.tar.gz" .TagName }}
-      bin: kubectl-jqlogs
-    - selector:
-        matchLabels:
-          os: linux
-          arch: amd64
-      {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Linux_x86_64.tar.gz" .TagName }}
-      bin: kubectl-jqlogs
-    - selector:
-        matchLabels:
-          os: linux
-          arch: arm64
-      {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Linux_arm64.tar.gz" .TagName }}
-      bin: kubectl-jqlogs
-    - selector:
-        matchLabels:
-          os: windows
-          arch: amd64
-      {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Windows_x86_64.zip" .TagName }}
-      bin: kubectl-jqlogs.exe
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: amd64
+    {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Darwin_x86_64.tar.gz" .TagName }}
+    bin: kubectl-jqlogs
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: arm64
+    {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Darwin_arm64.tar.gz" .TagName }}
+    bin: kubectl-jqlogs
+  - selector:
+      matchLabels:
+        os: linux
+        arch: amd64
+    {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Linux_x86_64.tar.gz" .TagName }}
+    bin: kubectl-jqlogs
+  - selector:
+      matchLabels:
+        os: linux
+        arch: arm64
+    {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Linux_arm64.tar.gz" .TagName }}
+    bin: kubectl-jqlogs
+  - selector:
+      matchLabels:
+        os: windows
+        arch: amd64
+    {{addURIAndSha "https://github.com/shihyuho/kubectl-jqlogs/releases/download/{{ .TagName }}/kubectl-jqlogs_Windows_x86_64.zip" .TagName }}
+    bin: kubectl-jqlogs.exe
