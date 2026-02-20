@@ -3,9 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"os/exec"
 
-	"github.com/itchyny/gojq/cli"
 	"github.com/shihyuho/kubectl-jqlogs/pkg/jqlogs"
 	"github.com/spf13/cobra"
 )
@@ -56,43 +54,8 @@ Smart Query syntax, and extends jq with YAML output and arbitrary precision math
 			os.Exit(0)
 		}
 
-		// Prepare Pipe for kubectl logs -> gojq
-		r, w, err := os.Pipe()
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error creating pipe: %v\n", err)
-			os.Exit(1)
-		}
-
-		// Run kubectl logs
-		runCmd := exec.Command("kubectl", append([]string{"logs"}, kubectlArgs...)...)
-		runCmd.Env = os.Environ()
-		runCmd.Stderr = os.Stderr
-		runCmd.Stdout = w // Write to pipe
-
-		if err := runCmd.Start(); err != nil {
-			fmt.Fprintf(os.Stderr, "Error starting kubectl logs: %v\n", err)
-			os.Exit(1)
-		}
-
-		// Close write end after kubectl exits, ensuring gojq/cli receives EOF.
-		// Note: We intentionally ignore the Wait() error here. If kubectl exits with
-		// a non-zero code (e.g., pod not found), the error message is already written
-		// to os.Stderr above. The goroutine cannot propagate errors back to the main
-		// flow, and gojq/cli will naturally terminate once it reads EOF from the pipe.
-		go func() {
-			runCmd.Wait()
-			w.Close()
-		}()
-
-		// Construct gojq arguments
-		jqArgs := jqlogs.BuildJqArgs(jqQuery, opts)
-
-		// Delegate to gojq/cli
-		// Override os.Args and os.Stdin
-		os.Args = jqArgs
-		os.Stdin = r // Read from pipe
-
-		exitCode := cli.Run()
+		runner := jqlogs.NewDefaultRunner()
+		exitCode := runner.Run(kubectlArgs, jqQuery, opts)
 		os.Exit(exitCode)
 	},
 }
